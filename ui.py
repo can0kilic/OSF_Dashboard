@@ -21,7 +21,8 @@ if selected_institute == 'All':
 else:
     filtered_data = orcidxofs_data[orcidxofs_data['institute'] == selected_institute]
 
-
+# filtered_data["date"] = pd.to_numeric(filtered_data["date"], errors="coerce")
+# filtered_data = filtered_data[(filtered_data["date"] <= 2022) & (filtered_data["date"] >= 1930)]
 
 st.title("OSF Dashboard")
 st.success(f"Showing data for institute: {selected_institute}")
@@ -82,7 +83,6 @@ modified_df = pd.read_csv("facInfo.csv")
 unibe_df = pd.read_csv("unibe_data.csv")
 
 merged_df = pd.merge(modified_df, unibe_df, on="institute", how="left")
-st.dataframe(merged_df)
 merged_df.dropna(subset=["faculty"], inplace=True)
 
 
@@ -91,14 +91,15 @@ faculty_sum['oar'] = faculty_sum['open'] / (faculty_sum['open'] + faculty_sum['c
 faculty_sum['oar'] = faculty_sum['oar'].round(2)  # Round to two decimal places
 faculty_sum = faculty_sum.sort_values(by='oar', ascending=False)
 faculty_sum.reset_index(inplace=True)
-fig = px.bar(faculty_sum, x='faculty', y='oar', labels={'faculty': 'Faculty', 'oar': 'OAR'})
+faculty_sum_filtered = faculty_sum[faculty_sum['oar'] > 0]
+
+fig = px.bar(faculty_sum_filtered, x='faculty', y='oar', labels={'faculty': 'Faculty', 'oar': 'OAR'})
 fig.update_layout(
-    title='Open Admission Rate (OAR) by Faculty',
+    title='Open Access Rate (OAR) by Faculty (Excluding OAR = 0)',
     xaxis_title='Faculty',
     yaxis_title='OAR',
 )
 st.plotly_chart(fig)
-
 
 # Create info button and section for Open Access Ratio by Faculty
 info_text_oar_faculty = "Open Access Ratio (OAR) by Faculty shows the open access publication rate for each faculty."
