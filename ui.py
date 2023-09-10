@@ -82,6 +82,7 @@ modified_df = pd.read_csv("facInfo.csv")
 unibe_df = pd.read_csv("unibe_data.csv")
 
 merged_df = pd.merge(modified_df, unibe_df, on="institute", how="left")
+st.dataframe(merged_df)
 merged_df.dropna(subset=["faculty"], inplace=True)
 
 
