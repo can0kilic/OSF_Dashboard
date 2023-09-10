@@ -58,6 +58,8 @@ st.dataframe(filtered_data)
 
 filtered_data_valid_dates = filtered_data[filtered_data['date'] != 'none']
 
+st.markdown("---")
+
 if not filtered_data_valid_dates.empty:
     date_counts = filtered_data_valid_dates['date'].value_counts().reset_index()
     date_counts.columns = ['Date', 'Frequency']
@@ -67,3 +69,31 @@ if not filtered_data_valid_dates.empty:
     st.plotly_chart(fig)
 else:
     st.info("No data with valid dates to plot.")
+
+
+st.markdown("---")
+
+modified_df = pd.read_csv("facInfo.csv")
+unibe_df = pd.read_csv("unibe_data.csv")
+
+merged_df = pd.merge(modified_df, unibe_df, on="institute", how="left")
+merged_df.dropna(subset=["faculty"], inplace=True)
+
+
+faculty_sum = merged_df.groupby('faculty')[['open', 'closed']].sum()
+faculty_sum['oar'] = faculty_sum['open'] / (faculty_sum['open'] + faculty_sum['closed'])
+faculty_sum['oar'] = faculty_sum['oar'].round(2)  # Round to two decimal places
+faculty_sum = faculty_sum.sort_values(by='oar', ascending=False)
+faculty_sum.reset_index(inplace=True)
+fig = px.bar(faculty_sum, x='faculty', y='oar', labels={'faculty': 'Faculty', 'oar': 'OAR'})
+fig.update_layout(
+    title='Open Admission Rate (OAR) by Faculty',
+    xaxis_title='Faculty',
+    yaxis_title='OAR',
+)
+st.plotly_chart(fig)
+
+
+# Create info button and section for Open Access Ratio by Faculty
+info_text_oar_faculty = "Open Access Ratio (OAR) by Faculty shows the open access publication rate for each faculty."
+create_info_section("Open Access Ratio by Faculty", info_text_oar_faculty)
