@@ -2,12 +2,17 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
+def create_info_section(title, info_text):
+    with st.expander(f"{title} - Know More?"):
+        st.info(info_text)
+
+
 orcidxofs_data = pd.read_csv('orcidxofs_2.csv')
 unique_institutes = pd.read_csv('unique_institutes.csv')
 
 st.sidebar.title('Select Institute')
-institute_list = ['All'] + unique_institutes['unique_institute'].tolist() 
-selected_institute = st.sidebar.selectbox('Choose an institute', institute_list)
+institute_list = ['All'] + sorted(unique_institutes['unique_institute'].tolist())
+selected_institute = st.sidebar.selectbox('Type or Select an Institute', institute_list)
 st.sidebar.info("This dashboard holds information pertaining to the data sourced from OSF.")
 
 if selected_institute == 'All':
@@ -16,6 +21,8 @@ if selected_institute == 'All':
 else:
     filtered_data = orcidxofs_data[orcidxofs_data['institute'] == selected_institute]
 
+# filtered_data["date"] = pd.to_numeric(filtered_data["date"], errors="coerce")
+# filtered_data = filtered_data[(filtered_data["date"] <= 2022) & (filtered_data["date"] >= 1930)]
 
 st.title("OSF Dashboard")
 st.success(f"Showing data for institute: {selected_institute}")
@@ -64,7 +71,6 @@ if not filtered_data_valid_dates.empty:
     date_counts = filtered_data_valid_dates['date'].value_counts().reset_index()
     date_counts.columns = ['Date', 'Frequency']
     date_counts = date_counts.sort_values(by='Date')
-
     fig = px.scatter(date_counts, x='Date', y='Frequency', labels={'Frequency': 'Frequency Count'}, title="Date Frequency Scatter Plot (Excluding 'none' Dates)")
     st.plotly_chart(fig)
 else:
@@ -97,3 +103,5 @@ st.plotly_chart(fig)
 # Create info button and section for Open Access Ratio by Faculty
 info_text_oar_faculty = "Open Access Ratio (OAR) by Faculty shows the open access publication rate for each faculty."
 create_info_section("Open Access Ratio by Faculty", info_text_oar_faculty)
+
+
