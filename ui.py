@@ -21,8 +21,8 @@ if selected_institute == 'All':
 else:
     filtered_data = orcidxofs_data[orcidxofs_data['institute'] == selected_institute]
 
-# filtered_data["date"] = pd.to_numeric(filtered_data["date"], errors="coerce")
-print(filtered_data["date"].dtype)
+filtered_data["date"] = pd.to_numeric(filtered_data["date"], errors="coerce")
+filtered_data = filtered_data[(filtered_data["date"] <= 2022)]
 
 st.title("OSF Dashboard")
 st.success(f"Showing data for institute: {selected_institute}")
