@@ -20,6 +20,10 @@ if selected_institute == 'All':
     
 else:
     filtered_data = orcidxofs_data[orcidxofs_data['institute'] == selected_institute]
+    filtered_data = filtered_data.rename(columns={"def": "definition"})
+    filtered_data = filtered_data.rename(columns={"full_name": "name"})
+
+
 
 filtered_data["date"] = pd.to_numeric(filtered_data["date"], errors="coerce")
 filtered_data = filtered_data[(filtered_data["date"] <= 2022)]
@@ -59,6 +63,9 @@ col2.metric("Open Entries", public_rec)
 col3.metric("Closed Entries", private_rec)
 col5.metric("Total Entries", total_rec)
 
+info_text_oar = "Open Access Rate (OAR): percentage of Open-Access publications among total publications -> OA-Publications / Total Publications"
+create_info_section("Open Access Rate", info_text_oar)
+
 st.markdown("---")
 
 st.dataframe(filtered_data)
@@ -71,7 +78,7 @@ if not filtered_data_valid_dates.empty:
     date_counts = filtered_data_valid_dates['date'].value_counts().reset_index()
     date_counts.columns = ['Date', 'Frequency']
     date_counts = date_counts.sort_values(by='Date')
-    fig = px.scatter(date_counts, x='Date', y='Frequency', labels={'Frequency': 'Frequency Count'}, title="Date Frequency Scatter Plot (Excluding 'none' Dates)")
+    fig = px.scatter(date_counts, x='Date', y='Frequency', labels={'Frequency': 'Count'}, title="Scatter Plot of Open Publication Frequency (Excluding 'none' Dates)")
     st.plotly_chart(fig)
 else:
     st.info("No data with valid dates to plot.")
@@ -101,8 +108,5 @@ fig.update_layout(
 )
 st.plotly_chart(fig)
 
-# Create info button and section for Open Access Ratio by Faculty
-info_text_oar_faculty = "Open Access Ratio (OAR) by Faculty shows the open access publication rate for each faculty."
-create_info_section("Open Access Ratio by Faculty", info_text_oar_faculty)
 
 
