@@ -78,7 +78,7 @@ if not filtered_data_valid_dates.empty:
     date_counts = filtered_data_valid_dates['date'].value_counts().reset_index()
     date_counts.columns = ['Date', 'Frequency']
     date_counts = date_counts.sort_values(by='Date')
-    fig = px.scatter(date_counts, x='Date', y='Frequency', labels={'Frequency': 'Count'}, title="Scatter Plot of Open Publication Frequency (Excluding 'none' Dates)")
+    fig = px.scatter(date_counts, x='Date', y='Frequency', labels={'Frequency': 'Count'}, title="Open Publication Frequency (Excluding 'none' Dates)")
     st.plotly_chart(fig)
 else:
     st.info("No data with valid dates to plot.")
