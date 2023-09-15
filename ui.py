@@ -22,7 +22,7 @@ else:
     filtered_data = orcidxofs_data[orcidxofs_data['institute'] == selected_institute]
 
 # filtered_data["date"] = pd.to_numeric(filtered_data["date"], errors="coerce")
-# filtered_data = filtered_data[(filtered_data["date"] <= 2022) & (filtered_data["date"] >= 1930)]
+filtered_data = filtered_data[(filtered_data["date"] <= 2022)]
 
 st.title("OSF Dashboard")
 st.success(f"Showing data for institute: {selected_institute}")
